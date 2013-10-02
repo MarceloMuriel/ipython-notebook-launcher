@@ -19,3 +19,8 @@ To create or launch a notebook for a single user with a custom password:
 ```bash
 python3 launch-notebook.py init-user -e user@domain.ch -p 9005 -pwd PASSWORD --notebooks-dir /path/to/notebooks
 ```
+To stop all notebooks launched with this script use:
+```bash
+python3 launch-notebook.py --stop-all
+```
+The previous just stops the processes and does not remove profiles or notebooks data from disk.
