@@ -9,8 +9,11 @@ from shutil import copyfile
 from getpass import getpass
 
 port_pids = {}
+script_dir = os.path.dirname(os.path.realpath(__file__))
+open('test.txt', 'a').close()
 notebooks_dir = os.path.expanduser('~')
 ipython_dir = os.path.expanduser('~') + '/.ipython'
+email_prompt = True
 
 def init_notebook(user):
 	fprof = '{}/profile_{}/ipython_notebook_config.py'.format(ipython_dir, user)
@@ -38,7 +41,7 @@ def write_pwd(user, password):
 def init_all(emails=[], port=9005, pwd='random'):
 	# Initialize vars for email sending
 	sender, smtp_user, smtp_pwd = '', '', ''
-	if input("Do you wish to send conf. emails? [y/n]: ") == 'y':
+	if email_prompt and input("Do you wish to send conf. emails? [y/n]: ") == 'y':
 		sender = input("sender address (default hugo.muriel@unine.ch): ") or 'hugo.muriel@unine.ch'
 		smtp_user = input("smtp username (default murielh): ") or 'murielh'
 		smtp_pwd = getpass("smtp password: ")
@@ -65,13 +68,13 @@ def init_all(emails=[], port=9005, pwd='random'):
 				sendemail_conf('http://eduinfo.unine.ch:{}/'.format(port), pwd, sender, email, smtp_user, smtp_pwd)
 			print('process', process.pid)
 		port += 1
-	with open('ipython-process.data', 'w+') as f:
+	with open(script_dir + '/ipython-process.data', 'w+') as f:
 		for p, pid in port_pids.items(): f.write('{},{}\n'.format(p, pid))
 def kill_all():
 	for p, pid in port_pids.items():
 		Popen(["kill", str(port_pids[p])])
 		print("Freeing port {}, killin process {}".format(p, port_pids[p]))
-	open('ipython-process.data', 'w').close()
+	open(script_dir + '/ipython-process.data', 'w').close()
 def sendemail_conf(nb_url, nb_pwd, sender, to, smtp_user, smtp_pwd):
 	import smtplib
 	from email.mime.text import MIMEText
@@ -94,8 +97,8 @@ def sendemail_conf(nb_url, nb_pwd, sender, to, smtp_user, smtp_pwd):
 	s.sendmail(sender, to, msg.as_string())
 	s.quit()
 if __name__ == '__main__':
-	open('ipython-process.data', 'a').close()
-	port_pids = {int(p.split(',').pop(0)):int(p.split(',').pop(1).strip()) for p in open('ipython-process.data')} 
+	open(script_dir + '/ipython-process.data', 'a').close()
+	port_pids = {int(p.split(',').pop(0)):int(p.split(',').pop(1).strip()) for p in open(script_dir + '/ipython-process.data')} 
 	
 	parser = argparse.ArgumentParser(description='Notebook Launcher.')
 	sparser = parser.add_subparsers(help='Commands', dest='command')
@@ -105,11 +108,12 @@ if __name__ == '__main__':
 	parserInit.add_argument('--notebooks-dir', type=str, required=True, help='notebooks directory, defaults to user\'s home dir.')
 	parserInit.add_argument('--ipython-dir', type=str, required=False, help='ipython directory, defaults to user\'s home dir.')
 	parserInit.add_argument('-pwd', '--password', type=str, required=False, help='password')
+	parserInit.add_argument('--no-email', action='store_true', help='do not prompt to send conf. email')
 	parserInitAll = sparser.add_parser('init-all-users', help='It launches notebooks for all users from a list of email addresses.')
-	#parser.add_argument('--init-all', action='store_true', help='initialize all profiles')
 	parserInitAll.add_argument('--notebooks-dir', type=str, required=True, help='notebooks directory, defaults to user\'s home dir.')
 	parserInitAll.add_argument('--ipython-dir', type=str, required=False, help='ipython directory, defaults to user\'s home dir.')
 	parserInitAll.add_argument('--emails-file', type=str, required=True, help='file with email adresses, one per line')
+	parserInitAll.add_argument('--no-email', action='store_true', help='do not prompt to send conf. email')
 	parser.add_argument('--stop-all', action='store_true', help='stop all running notebooks')
 	args = parser.parse_args()
 	if args.command == 'init-all-users': 
@@ -119,6 +123,7 @@ if __name__ == '__main__':
 		init_all([e.strip() for e in open(args.emails_file)])
 	if args.stop_all: 
 		kill_all()
+	if args.no_email: email_prompt = False
 	if args.command == 'init-user':
 		notebooks_dir = args.notebooks_dir
 		if args.ipython_dir: ipython_dir = args.ipython_dir
