@@ -10,7 +10,6 @@ from getpass import getpass
 
 port_pids = {}
 script_dir = os.path.dirname(os.path.realpath(__file__))
-open('test.txt', 'a').close()
 notebooks_dir = os.path.expanduser('~')
 ipython_dir = os.path.expanduser('~') + '/.ipython'
 email_prompt = True
