@@ -1,7 +1,7 @@
 import os
 
 base_dir = '/var/imi/prog/notebooks'
-# inside de base_dir
+# inside the base_dir
 target_dir = 'all'
 # open target dir
 os.chdir('/'.join([base_dir, target_dir]))
@@ -18,6 +18,6 @@ for nbdir in os.listdir(base_dir):
 				os.symlink(target, link)
 # Remove invalid symlinks
 for f in os.listdir('.'):
-	if not os.path.isfile(f): 
+	if not os.path.isfile(f) and not os.path.isdir(f):  
 		print("removing {}".format(f))
 		os.remove(f)
