@@ -24,3 +24,8 @@ To stop all notebooks launched with this script use:
 python3 launch-notebook.py --stop-all
 ```
 The previous just stops the processes and does not remove profiles or notebooks data from disk.
+
+To launch all existent notebooks from the output file email\_ports.dat
+```bash
+python3 launch-notebook.py launch-all --notebooks-dir /path/to/notebooks
+```
