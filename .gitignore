@@ -1,4 +1,7 @@
 5MI1003_001_userlist
 nb-symlinks.out
 ipython-process.data
+email_ports.data
 php_launcher.sh
+import-email_ports-postgress.py
+launch-all-notebooks.sh
