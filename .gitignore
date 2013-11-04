@@ -1,5 +1,5 @@
 5MI1003_001_userlist
-nb-symlinks.out
+*.out
 ipython-process.data
 email_ports.data
 php_launcher.sh
