@@ -7,9 +7,10 @@ target_dir = 'all'
 os.chdir('/'.join([base_dir, target_dir]))
 
 for nbdir in os.listdir(base_dir):
+	if not os.path.isdir('/'.join([base_dir, nbdir])): continue
 	# Read each subdir except for the target_dir
 	if nbdir == target_dir: continue
-	print(nbdir)
+	# print(nbdir)
 	for f in os.listdir('/'.join([base_dir, nbdir])):
 		if f.endswith('.ipynb'):
 			link, target = '_'.join([nbdir, f]), '/'.join(['..', nbdir, f])
